@@ -1,0 +1,14 @@
+{
+  "name": "竞赛数学 · 大学生数学竞赛学习空间",
+  "short_name": "竞赛数学",
+  "description": "大学生数学竞赛真题、智能复习、薄弱点诊断与限时训练",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f0e4",
+  "theme_color": "#123b5d",
+  "icons": [
+    {"src":"app-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}

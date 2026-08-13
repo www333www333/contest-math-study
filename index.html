@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#123b5d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="竞赛数学" />
+  <title>竞赛数学 · 学习空间</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="app-icon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Serif+SC:wght@500;600;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vendor/katex/katex.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="paper-grain"></div>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="回到首页"><span class="brand-mark">∫</span><span>竞赛数学</span></a>
+    <nav aria-label="主导航">
+      <a class="active" href="#overview">总览</a><a href="#coach">冲奖台</a><a href="#route">路线</a><a href="#practice">练习</a><a href="#drill">刷题</a><a href="#archive">真题库</a><a href="#notes">错题本</a>
+    </nav>
+    <button class="quiet-button" id="focusButton">专注模式</button>
+  </header>
+
+  <main id="top">
+    <section class="hero" id="overview">
+      <div class="hero-copy">
+        <p class="eyebrow">THE UNIVERSITY MATH CONTEST · 2026</p>
+        <h1>把每一道题，<br /><em>变成你的底气。</em></h1>
+        <p class="intro">从基础梳理到真题冲刺。按自己的节奏，搭一套真正能上考场的数学体系。</p>
+        <div class="hero-actions"><a class="primary-button" href="#today">开始今日学习 <span>→</span></a><button class="text-button" id="resetButton">重置本地进度</button></div>
+      </div>
+      <aside class="quote-card">
+        <span class="quote-symbol">“</span>
+        <p>数学竞赛不是比谁记得更多，<br />而是比谁能在陌生处<br />找到熟悉的结构。</p>
+        <span class="quote-source">— 学习札记 / 01</span>
+        <div class="formula">∑<sub>k=1</sub><sup>n</sup> k = n(n+1) / 2</div>
+      </aside>
+    </section>
+
+    <section class="stats-strip" aria-label="学习进度">
+      <div><span class="stat-value" id="daysStudied">0</span><span class="stat-label">学习天数</span></div>
+      <div><span class="stat-value" id="completedCount">0</span><span class="stat-label">已完成单元</span></div>
+      <div><span class="stat-value" id="accuracy">—</span><span class="stat-label">练习正确率</span></div>
+      <div class="streak"><span class="stat-value" id="streak">0</span><span class="stat-label">连续学习</span><span class="fire">✦</span></div>
+    </section>
+
+    <section class="section coach-section" id="coach">
+      <div class="section-heading"><div><p class="eyebrow">AWARD TRAINING DESK</p><h2>冲奖训练台</h2></div><p class="section-note">根据你的真实做题记录，自动决定下一步练什么。</p></div>
+      <div class="coach-grid">
+        <article class="readiness-card">
+          <div class="readiness-ring" id="readinessRing"><div><strong id="readinessScore">0</strong><span>冲奖准备度</span></div></div>
+          <div><p class="coach-kicker">当前阶段</p><h3 id="readinessLevel">刚刚起步</h3><p id="readinessAdvice">先完成今日 3 题，让系统开始识别你的薄弱点。</p></div>
+        </article>
+        <article class="coach-card diagnostic-card">
+          <div class="coach-card-title"><h3>能力诊断</h3><span>实时更新</span></div>
+          <div class="diagnostic-grid">
+            <div><strong id="coachAccuracy">—</strong><span>当前正确率</span></div>
+            <div><strong id="coachCoverage">0%</strong><span>题库覆盖率</span></div>
+            <div><strong id="coachMastery">0</strong><span>稳定掌握</span></div>
+            <div><strong id="coachReviewCount">0</strong><span>今日待复习</span></div>
+          </div>
+          <div class="week-chart" id="weekChart" aria-label="近七日训练量"></div>
+        </article>
+        <article class="coach-card weakness-card">
+          <div class="coach-card-title"><h3>薄弱点雷达</h3><span>优先补短板</span></div>
+          <div id="weakTopicList" class="weak-topic-list"></div>
+        </article>
+      </div>
+      <div class="mission-panel">
+        <div class="mission-copy"><p class="coach-kicker">TODAY'S MISSION</p><h3>今日冲奖任务</h3><p>少而精地完成闭环，比盲目刷很多题更有效。</p></div>
+        <div class="mission-list" id="missionList"></div>
+        <div class="coach-actions"><button class="primary-button" id="dailyChallenge">开始今日 3 题 <span>→</span></button><button id="smartReview">智能复习</button><button id="timedTraining">10 分钟限时训练</button></div>
+      </div>
+    </section>
+
+    <section class="section today-section" id="today">
+      <div class="section-heading"><div><p class="eyebrow">TODAY'S FOCUS</p><h2>今日学习</h2></div><p class="date" id="todayDate"></p></div>
+      <div class="today-grid">
+        <article class="today-card featured"><div class="card-number">01 / 概念回顾</div><span class="time">25 MIN</span><h3>极限与连续<br />的常用判定</h3><p>梳理四个必会定理，建立反例意识。</p><button class="lesson-button complete-toggle" data-task="limit">开始学习 <span>→</span></button></article>
+        <article class="today-card"><div class="card-number">02 / 例题精练</div><span class="time">35 MIN</span><h3>泰勒公式<br />的竞赛用法</h3><p>用展开式处理等价无穷小与极值问题。</p><button class="lesson-button complete-toggle" data-task="taylor">开始练习 <span>→</span></button></article>
+        <article class="today-card muted"><div class="card-number">03 / 复盘整理</div><span class="time">15 MIN</span><h3>写下一个<br />卡住你的点</h3><p>把模糊的地方变成下一次的突破口。</p><a class="lesson-button" href="#notes">去记录 <span>→</span></a></article>
+      </div>
+    </section>
+
+    <section class="section route-section" id="route">
+      <div class="section-heading"><div><p class="eyebrow">STUDY MAP</p><h2>12 周备赛路线</h2></div><p class="section-note">先建立框架，再在题目里打磨直觉。</p></div>
+      <div class="route-grid" id="routeGrid">
+        <article class="route-card done"><span class="week">第 1–2 周</span><h3>基础校准</h3><ul><li>函数、极限与连续</li><li>一元微积分</li><li>线性代数基础</li></ul><button class="route-toggle" data-route="foundation">标记完成</button></article>
+        <article class="route-card"><span class="week">第 3–5 周</span><h3>核心突破</h3><ul><li>多元函数微积分</li><li>级数与微分方程</li><li>矩阵、二次型</li></ul><button class="route-toggle" data-route="core">标记完成</button></article>
+        <article class="route-card"><span class="week">第 6–8 周</span><h3>专题训练</h3><ul><li>不等式与证明</li><li>数列、组合与概率</li><li>综合题拆解</li></ul><button class="route-toggle" data-route="topics">标记完成</button></article>
+        <article class="route-card"><span class="week">第 9–12 周</span><h3>真题冲刺</h3><ul><li>限时套卷</li><li>错题回炉</li><li>答题策略</li></ul><button class="route-toggle" data-route="sprint">标记完成</button></article>
+      </div>
+    </section>
+
+    <section class="section practice-section" id="practice">
+      <div class="section-heading"><div><p class="eyebrow">QUICK PRACTICE</p><h2>今日一题</h2></div><span class="difficulty">●●○ 基础巩固</span></div>
+      <div class="problem-box">
+        <div class="problem-index">PROBLEM / 001</div>
+        <p class="problem">设函数 <i>f</i>(<i>x</i>) = <i>x</i><sup>2</sup> ln <i>x</i>（<i>x</i> &gt; 0），求 <i>f</i>(<i>x</i>) 在 (0, +∞) 上的最小值。</p>
+        <div class="answer-row"><button class="answer-choice" data-answer="A">A. −1 / 2e</button><button class="answer-choice" data-answer="B">B. −1 / e<sup>2</sup></button><button class="answer-choice" data-answer="C">C. 0</button><button class="answer-choice" data-answer="D">D. 不存在</button></div>
+        <p class="feedback" id="feedback" aria-live="polite">选择一个答案，检验你的直觉。</p>
+      </div>
+      <details class="lesson-explanation" id="explanation">
+        <summary><span>本题知识点讲解</span><span class="summary-hint">展开阅读 +</span></summary>
+        <div class="explanation-content">
+          <div class="concept-column"><p class="explain-label">考查核心</p><h3>导数判别最值</h3><p>对可导函数，先求驻点（<i>f</i>′(<i>x</i>) = 0），再结合导数符号变化判断增减性。竞赛题里，定义域和端点同样不能漏。</p><div class="tip-box"><strong>易错提醒</strong><br />这里 <i>x</i> = 0 不在定义域内；不能只把驻点代回，还要确认它确实给出最小值。</div></div>
+          <div class="solution-column"><p class="explain-label">标准思路</p><ol><li>求导：<i>f</i>′(<i>x</i>) = 2<i>x</i>ln<i>x</i> + <i>x</i> = <i>x</i>(2ln<i>x</i> + 1)。</li><li>令 <i>f</i>′(<i>x</i>) = 0。因为 <i>x</i> &gt; 0，所以 ln<i>x</i> = −1/2，即 <i>x</i> = e<sup>−1/2</sup>。</li><li>当 0 &lt; <i>x</i> &lt; e<sup>−1/2</sup> 时导数为负；其后为正，故该点为最小值点。</li><li>代回：<i>f</i>(e<sup>−1/2</sup>) = e<sup>−1</sup> · (−1/2) = <strong>−1/(2e)</strong>。</li></ol></div>
+        </div>
+      </details>
+    </section>
+
+    <section class="section drill-section" id="drill">
+      <div class="section-heading"><div><p class="eyebrow">QUESTION TRAINER</p><h2>历届真题刷题</h2></div><p class="section-note">已精校 17 道 · 第 1—17 届各 1 道，后续可持续扩充</p></div>
+      <div class="drill-toolbar">
+        <label>届次<select id="quizEdition"><option value="all">全部届次</option></select></label>
+        <label>知识点<select id="quizTopic"><option value="all">全部知识点</option></select></label>
+        <div class="drill-modes"><button class="quiz-mode active" data-mode="all">全部</button><button class="quiz-mode" data-mode="review">待复习 <span id="reviewCount">0</span></button><button class="quiz-mode" data-mode="wrong">错题集 <span id="wrongCount">0</span></button><button class="quiz-mode" data-mode="favorite">收藏 <span id="favoriteCount">0</span></button></div>
+      </div>
+      <div class="timer-panel" id="timerPanel" hidden><div><span class="timer-icon">◷</span><span><small>限时训练</small><strong id="timerDisplay">10:00</strong></span></div><p id="timerMessage">先独立作答，到时再核对解析。</p><div><button id="pauseTimer">暂停</button><button id="endTimer">结束训练</button></div></div>
+      <div class="quiz-progress"><div><span id="quizPosition">1 / 17</span><span id="quizMeta">第 1 届 · 2009</span></div><div class="quiz-progress-track"><i id="quizProgressBar"></i></div></div>
+      <article class="quiz-card" id="quizCard">
+        <div class="quiz-card-head"><div id="quizBadges"></div><button class="favorite-button" id="favoriteButton" aria-label="收藏本题">☆ 收藏</button></div>
+        <h3 id="quizTitle"></h3>
+        <div class="quiz-question" id="quizQuestion"></div>
+        <div class="work-area"><label for="workInput">你的演算与答案</label><textarea id="workInput" placeholder="先独立完成，再展开解析。草稿会自动保存在本浏览器。"></textarea></div>
+        <div class="quiz-actions"><button class="primary-button small" id="revealAnswer">展开答案</button><button class="self-mark correct-mark" data-mark="correct">✓ 我做对了</button><button class="self-mark wrong-mark" data-mark="wrong">× 加入错题</button><a id="quizSource" class="source-link" target="_blank">核对原卷 ↗</a></div>
+        <section class="answer-panel" id="answerPanel" hidden>
+          <div class="answer-result"><span>答案</span><strong id="quizAnswer"></strong></div>
+          <div class="knowledge-box"><span>知识点</span><p id="quizKnowledge"></p></div>
+          <div class="solution-tabs" id="solutionTabs"></div>
+          <div class="solution-view"><ol id="solutionSteps"></ol><button class="step-button" id="nextStep">显示下一步</button></div>
+          <div class="mistake-box"><strong>易错提醒</strong><p id="quizMistake"></p></div>
+        </section>
+      </article>
+      <div class="quiz-nav"><button id="prevQuestion">← 上一题</button><button id="randomQuestion">随机一题</button><button id="nextQuestion">下一题 →</button></div>
+      <p class="shortcut-hint">快捷键：← / → 换题　空格展开答案　1 做对　2 做错　F 收藏</p>
+      <p class="quiz-empty" id="quizEmpty" hidden>当前筛选下还没有题目。试着切换到“全部”，或先收藏/标记错题。</p>
+    </section>
+
+    <section class="section archive-section" id="archive">
+      <div class="section-heading"><div><p class="eyebrow">PAST PAPERS</p><h2>历年真题库</h2></div><p class="section-note">已整理 17 届 · 35 份试卷与参考答案</p></div>
+      <div class="archive-toolbar"><div class="archive-tabs" role="group" aria-label="真题筛选"><button class="archive-filter active" data-filter="all">全部</button><button class="archive-filter" data-filter="prelim">初赛</button><button class="archive-filter" data-filter="final">决赛</button><button class="archive-filter" data-filter="math">数学类</button></div><label class="archive-search">⌕ <input id="archiveSearch" type="search" placeholder="搜索年份、届次或试卷" /></label></div>
+      <div class="archive-grid" id="archiveGrid">
+        <article class="archive-item" data-type="prelim"><span class="archive-year">2009</span><div><h3>第 1 届 · 非数学类</h3><p>初赛试卷 · 参考答案</p></div><a href="materials/2009-01/paper.pdf" target="_blank">试卷</a><a href="materials/2009-01/answer.pdf" target="_blank">答案</a></article>
+        <article class="archive-item" data-type="prelim final"><span class="archive-year">2010</span><div><h3>第 2 届 · 非数学类</h3><p>初赛、决赛参考解答</p></div><a href="materials/2010-02/document-03.pdf" target="_blank">初赛试卷</a><a href="materials/2010-02/document-01.pdf" target="_blank">初赛答案</a><a href="materials/2010-02/document-02.pdf" target="_blank">决赛答案</a></article>
+        <article class="archive-item" data-type="prelim final"><span class="archive-year">2011</span><div><h3>第 3 届 · 非数学类</h3><p>初赛、决赛参考解答</p></div><a href="materials/2011-03/document-01.pdf" target="_blank">初赛答案</a><a href="materials/2011-03/document-02.pdf" target="_blank">决赛答案</a></article>
+        <article class="archive-item" data-type="prelim final"><span class="archive-year">2012</span><div><h3>第 4 届 · 非数学类</h3><p>初赛、决赛参考解答</p></div><a href="materials/2012-04/document-01.pdf" target="_blank">初赛答案</a><a href="materials/2012-04/document-02.pdf" target="_blank">决赛答案</a></article>
+        <article class="archive-item" data-type="prelim final"><span class="archive-year">2013</span><div><h3>第 5 届 · 非数学类</h3><p>初赛、决赛参考解答</p></div><a href="materials/2013-05/document-01.pdf" target="_blank">初赛答案</a><a href="materials/2013-05/document-02.pdf" target="_blank">决赛答案</a></article>
+        <article class="archive-item" data-type="prelim"><span class="archive-year">2014</span><div><h3>第 6 届 · 非数学类</h3><p>初赛试卷及参考答案</p></div><a href="materials/2014-06/non-math-prelim-only.pdf" target="_blank">初赛与答案</a></article>
+        <article class="archive-item" data-type="prelim final"><span class="archive-year">2015</span><div><h3>第 7 届 · 非数学类</h3><p>初赛、决赛参考解答</p></div><a href="materials/2015-07/document-01.pdf" target="_blank">初赛答案</a><a href="materials/2015-07/document-02.pdf" target="_blank">决赛答案</a></article>
+        <article class="archive-item" data-type="prelim final"><span class="archive-year">2016</span><div><h3>第 8 届 · 非数学类</h3><p>初赛、决赛参考解答</p></div><a href="materials/2016-08/non-math-prelim-answer.pdf" target="_blank">2016 初赛与答案</a><a href="materials/2016-08/document-02.pdf" target="_blank">2017 决赛答案</a></article>
+        <article class="archive-item" data-type="prelim final"><span class="archive-year">2017</span><div><h3>第 9 届 · 非数学类</h3><p>初赛、决赛参考解答</p></div><a href="materials/2017-09/document-01.pdf" target="_blank">初赛答案</a><a href="materials/2017-09/document-02.pdf" target="_blank">决赛答案</a></article>
+        <article class="archive-item" data-type="prelim final"><span class="archive-year">2018</span><div><h3>第 10 届 · 非数学类</h3><p>初赛、决赛参考解答</p></div><a href="materials/2018-10/document-01.pdf" target="_blank">初赛答案</a><a href="materials/2018-10/document-02.pdf" target="_blank">决赛答案</a></article>
+        <article class="archive-item" data-type="prelim final"><span class="archive-year">2019</span><div><h3>第 11 届 · 非数学类</h3><p>初赛、决赛参考解答</p></div><a href="materials/2019-11/document-01.pdf" target="_blank">初赛答案</a><a href="materials/2019-11/document-02.pdf" target="_blank">决赛答案</a></article>
+        <article class="archive-item" data-type="prelim final"><span class="archive-year">2020</span><div><h3>第 12 届 · 非数学类</h3><p>初赛、决赛试题与参考解答</p></div><a href="materials/2020-12/document-01.pdf" target="_blank">初赛答案</a><a href="materials/2020-12/document-02.pdf" target="_blank">决赛资料</a></article>
+        <article class="archive-item" data-type="prelim"><span class="archive-year">2021</span><div><h3>第 13 届 · 非数学类</h3><p>初赛试题及参考答案</p></div><a href="materials/2021-13/non-math-prelim-answer.pdf" target="_blank">查看真题与答案</a></article>
+        <article class="archive-item" data-type="prelim final"><span class="archive-year">2022</span><div><h3>第 14 届 · 非数学类</h3><p>初赛、补赛、决赛试题与答案</p></div><a href="materials/2022-14/document-02.pdf" target="_blank">初赛</a><a href="materials/2022-14/document-01.pdf" target="_blank">补赛</a><a href="materials/2022-14/document-03.pdf" target="_blank">决赛</a></article>
+        <article class="archive-item" data-type="prelim"><span class="archive-year">2023</span><div><h3>第 15 届 · 非数学类</h3><p>初赛 A/B 类试题及参考答案</p></div><a href="materials/2023-15/non-math-a-prelim-answer.pdf" target="_blank">非数 A</a><a href="materials/2023-15/non-math-b-prelim-answer.pdf" target="_blank">非数 B</a></article>
+        <article class="archive-item" data-type="prelim final"><span class="archive-year">2024</span><div><h3>第 16 届 · 非数学 A 类</h3><p>初赛、决赛试题及答案解析</p></div><a href="materials/2024-16/document-01.pdf" target="_blank">初赛</a><a href="materials/2024-16/document-02.pdf" target="_blank">决赛</a></article>
+        <article class="archive-item" data-type="prelim math"><span class="archive-year">2025</span><div><h3>第 17 届 · 数学 A 类</h3><p>初赛、参考答案及河南复赛</p></div><a href="materials/2025-17/document-01.pdf" target="_blank">初赛试题</a><a href="materials/2025-17/document-02.pdf" target="_blank">初赛答案</a><a href="materials/2025-17/document-03.pdf" target="_blank">复赛试题</a></article>
+      </div>
+      <p class="archive-empty" id="archiveEmpty" hidden>没有匹配的资料，请更换搜索词或筛选条件。</p>
+    </section>
+
+    <section class="section notes-section" id="notes">
+      <div class="section-heading"><div><p class="eyebrow">ERROR LOG</p><h2>错题与思考</h2></div><p class="section-note">好记性不如一页好复盘。</p></div>
+      <div class="notes-layout"><div class="notebook"><label for="noteInput">今天我需要再想一想的是：</label><textarea id="noteInput" placeholder="例如：为什么拉格朗日中值定理的辅助函数要这样构造？"></textarea><div><button class="primary-button small" id="saveNote">存入错题本</button><span id="saveStatus"></span></div></div><div class="note-list" id="noteList"><p class="empty-note">这里还没有记录。把每次“差一点懂”的瞬间留下来。</p></div></div>
+    </section>
+    <section class="section share-section" id="share">
+      <div class="section-heading"><div><p class="eyebrow">STUDY TOGETHER</p><h2>邀请同学，一起打卡</h2></div><p class="section-note">独自深耕，也可以彼此照亮。</p></div>
+      <div class="share-card"><div><p class="share-title">大学生数学竞赛备赛小组</p><p>每日一题、知识点精讲、错题复盘。把这份学习空间发给同学，约定每周完成一个专题。</p></div><button class="primary-button" id="copyShare">复制推广文案 <span>↗</span></button></div>
+    </section>
+  </main>
+  <div class="site-toast" id="siteToast" role="status" aria-live="polite"></div>
+  <footer><span>竞赛数学 · 为长线积累而设计</span><span>每一次演算，都在靠近答案。</span></footer>
+  <script src="vendor/katex/katex.min.js"></script>
+  <script src="vendor/katex/auto-render.min.js"></script>
+  <script src="quiz-data.js"></script>
+  <script src="quiz.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
