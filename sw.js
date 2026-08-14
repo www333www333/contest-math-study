@@ -1,4 +1,4 @@
-const CACHE='contest-math-v4';
+const CACHE='contest-math-v5';
 const CORE=['./','./index.html','./style.css','./app.js','./quiz.js','./quiz-data.js','./daily.js','./knowledge-data.js','./knowledge.js','./manifest.webmanifest','./app-icon.svg','./vendor/katex/katex.min.css','./vendor/katex/katex.min.js','./vendor/katex/auto-render.min.js'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
