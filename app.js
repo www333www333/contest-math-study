@@ -7,7 +7,8 @@ function updateStats(){
   const completed = Object.keys(state.tasks).filter(k => state.tasks[k]).length + Object.keys(state.routes).filter(k => state.routes[k]).length;
   document.querySelector('#completedCount').textContent = completed;
   const quizStats=window.mathContestQuiz?.getStats(), quizDays=(quizStats?.progress.history||[]).map(h=>new Date(h.ts).toISOString().slice(0,10));
-  const days = new Set([...(state.studyDays || []),...quizDays, ...(completed || state.answers.length ? [dateKey()] : [])]);
+  let dailyDays=[];try{dailyDays=JSON.parse(localStorage.getItem('math-contest-daily-v1')||'{}').completed||[];}catch{}
+  const days = new Set([...(state.studyDays || []),...quizDays,...dailyDays, ...(completed || state.answers.length ? [dateKey()] : [])]);
   state.studyDays = [...days];
   document.querySelector('#daysStudied').textContent = days.size;
   const correct = state.answers.filter(a => a.correct).length+(quizStats?.correct||0), total=state.answers.length+(quizStats?.total||0);
@@ -38,14 +39,6 @@ function renderNotes(){
 document.querySelector('#todayDate').textContent = new Intl.DateTimeFormat('zh-CN',{month:'long',day:'numeric',weekday:'short'}).format(new Date());
 document.querySelectorAll('.complete-toggle').forEach(button => button.addEventListener('click', () => { state.tasks[button.dataset.task] = !state.tasks[button.dataset.task]; renderTasks(); updateStats(); }));
 document.querySelectorAll('.route-toggle').forEach(button => button.addEventListener('click', () => { state.routes[button.dataset.route] = !state.routes[button.dataset.route]; renderTasks(); updateStats(); }));
-document.querySelectorAll('.answer-choice').forEach(button => button.addEventListener('click', () => {
-  const correct = button.dataset.answer === 'A';
-  document.querySelectorAll('.answer-choice').forEach(b => b.classList.remove('correct','wrong'));
-  button.classList.add(correct ? 'correct' : 'wrong');
-  if(!correct) document.querySelector('[data-answer="A"]').classList.add('correct');
-  document.querySelector('#feedback').textContent = correct ? '答对了！f′(x)=x(2ln x+1)，在 x=e^(−1/2) 处取最小值 −1/(2e)。' : '再算一步：令 f′(x)=x(2ln x+1)=0，可得 x=e^(−1/2)。';
-  state.answers.push({date:dateKey(),correct}); updateStats();
-}));
 document.querySelector('#saveNote').addEventListener('click', () => { const input = document.querySelector('#noteInput'); const text = input.value.trim(); if(!text) return; state.notes.unshift({date:new Intl.DateTimeFormat('zh-CN',{month:'2-digit',day:'2-digit'}).format(new Date()),text,ts:Date.now()}); input.value=''; save(); renderNotes(); renderCoach(); document.querySelector('#saveStatus').textContent='已保存'; setTimeout(()=>document.querySelector('#saveStatus').textContent='',1500); });
 document.querySelector('#noteList').addEventListener('click', e => { if(e.target.matches('.delete-note')){state.notes.splice(e.target.dataset.index,1);save();renderNotes();} });
 document.querySelector('#focusButton').addEventListener('click', () => { document.body.classList.toggle('focus-mode'); document.querySelector('#focusButton').textContent = document.body.classList.contains('focus-mode') ? '退出专注模式' : '专注模式'; });
@@ -54,7 +47,7 @@ let archiveFilter = 'all';
 const filterArchive = () => { const query = document.querySelector('#archiveSearch').value.trim().toLowerCase(); let visible = 0; document.querySelectorAll('.archive-item').forEach(item => { const matchesType = archiveFilter === 'all' || item.dataset.type?.split(' ').includes(archiveFilter); const matchesQuery = !query || item.textContent.toLowerCase().includes(query); const show = matchesType && matchesQuery; item.classList.toggle('is-hidden', !show); if(show) visible++; }); document.querySelector('#archiveEmpty').hidden = visible !== 0; };
 document.querySelectorAll('.archive-filter').forEach(button => button.addEventListener('click', () => { archiveFilter = button.dataset.filter; document.querySelectorAll('.archive-filter').forEach(item => item.classList.toggle('active', item === button)); filterArchive(); }));
 document.querySelector('#archiveSearch').addEventListener('input', filterArchive);
-document.querySelector('#resetButton').addEventListener('click', () => { if(confirm('确定清除本网站的全部学习记录吗？')){localStorage.removeItem(STORAGE_KEY);localStorage.removeItem('math-contest-quiz-v1');localStorage.removeItem('math-contest-knowledge-v1');location.reload();} });
+document.querySelector('#resetButton').addEventListener('click', () => { if(confirm('确定清除本网站的全部学习记录吗？')){localStorage.removeItem(STORAGE_KEY);localStorage.removeItem('math-contest-quiz-v1');localStorage.removeItem('math-contest-knowledge-v1');localStorage.removeItem('math-contest-daily-v1');location.reload();} });
 
 function renderCoach(){
   if(!window.mathContestQuiz)return;
@@ -83,6 +76,7 @@ document.querySelector('#smartReview').addEventListener('click',()=>window.mathC
 document.querySelector('#timedTraining').addEventListener('click',()=>window.mathContestQuiz.startSession('timed',3,10));
 document.querySelector('#weakTopicList').addEventListener('click',e=>{const b=e.target.closest('[data-topic]');if(!b)return;document.querySelector('#quizTopic').value=b.dataset.topic;document.querySelector('#quizTopic').dispatchEvent(new Event('change'));document.querySelector('#drill').scrollIntoView({behavior:'smooth'});});
 window.addEventListener('quiz-progress-updated',()=>{renderCoach();updateStats();});
+window.addEventListener('daily-progress-updated',updateStats);
 renderTasks(); renderNotes(); updateStats();
 renderCoach();
 if('serviceWorker' in navigator && location.protocol.startsWith('http')) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));

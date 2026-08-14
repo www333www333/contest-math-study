@@ -60,6 +60,10 @@
     if(minutes) startTimer(minutes); else stopTimer();
     toast(kind==='review'?`已生成 ${sessionIds.length} 题智能复习`:`今日 ${sessionIds.length} 题已生成`);
   }
+  function openQuestion(id){
+    if(!questions.some(q=>q.id===id))return;
+    sessionIds=[id];mode='session';$('quizEdition').value='all';$('quizTopic').value='all';document.querySelectorAll('.quiz-mode').forEach(x=>x.classList.remove('active'));applyFilter();$('drill').scrollIntoView({behavior:'smooth'});
+  }
   function recordResult(correct){
     if(!filtered.length)return;
     const q=filtered[index], id=q.id, a=progress.attempts[id]||{total:0,correct:0,wrong:0,streak:0};
@@ -97,6 +101,6 @@
   $('pauseTimer').addEventListener('click',()=>{timerPaused=!timerPaused;$('pauseTimer').textContent=timerPaused?'继续':'暂停';$('timerMessage').textContent=timerPaused?'计时已暂停，准备好后继续。':'先独立作答，到时再核对解析。';});
   $('endTimer').addEventListener('click',()=>{stopTimer();toast('限时训练已结束');});
   document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;if(e.key==='ArrowLeft')$('prevQuestion').click();if(e.key==='ArrowRight')$('nextQuestion').click();if(e.code==='Space'){e.preventDefault();$('revealAnswer').click();}if(e.key==='1')recordResult(true);if(e.key==='2')recordResult(false);if(e.key.toLowerCase()==='f')$('favoriteButton').click();});
-  window.mathContestQuiz={startSession,getStats,toast,startTimer};
+  window.mathContestQuiz={startSession,openQuestion,getStats,toast,startTimer};
   applyFilter(); save();
 })();
