@@ -1,4 +1,4 @@
-const CACHE='contest-math-v3';
+const CACHE='contest-math-v4';
 const CORE=['./','./index.html','./style.css','./app.js','./quiz.js','./quiz-data.js','./daily.js','./knowledge-data.js','./knowledge.js','./manifest.webmanifest','./app-icon.svg','./vendor/katex/katex.min.css','./vendor/katex/katex.min.js','./vendor/katex/auto-render.min.js'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
@@ -10,5 +10,7 @@ self.addEventListener('fetch',event=>{
     event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put('./index.html',copy));return response;}).catch(()=>caches.match('./index.html')));
     return;
   }
-  event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request).then(response=>{if(response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));}return response;})));
+  const cacheFirst=url.pathname.includes('/vendor/katex/fonts/')||url.pathname.endsWith('.pdf');
+  if(cacheFirst){event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request).then(response=>{if(response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));}return response;})));return;}
+  event.respondWith(fetch(event.request).then(response=>{if(response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));}return response;}).catch(()=>caches.match(event.request)));
 });

@@ -79,4 +79,4 @@ window.addEventListener('quiz-progress-updated',()=>{renderCoach();updateStats()
 window.addEventListener('daily-progress-updated',updateStats);
 renderTasks(); renderNotes(); updateStats();
 renderCoach();
-if('serviceWorker' in navigator && location.protocol.startsWith('http')) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').then(registration=>registration.update()).catch(()=>{}));
