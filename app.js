@@ -54,7 +54,7 @@ let archiveFilter = 'all';
 const filterArchive = () => { const query = document.querySelector('#archiveSearch').value.trim().toLowerCase(); let visible = 0; document.querySelectorAll('.archive-item').forEach(item => { const matchesType = archiveFilter === 'all' || item.dataset.type?.split(' ').includes(archiveFilter); const matchesQuery = !query || item.textContent.toLowerCase().includes(query); const show = matchesType && matchesQuery; item.classList.toggle('is-hidden', !show); if(show) visible++; }); document.querySelector('#archiveEmpty').hidden = visible !== 0; };
 document.querySelectorAll('.archive-filter').forEach(button => button.addEventListener('click', () => { archiveFilter = button.dataset.filter; document.querySelectorAll('.archive-filter').forEach(item => item.classList.toggle('active', item === button)); filterArchive(); }));
 document.querySelector('#archiveSearch').addEventListener('input', filterArchive);
-document.querySelector('#resetButton').addEventListener('click', () => { if(confirm('确定清除本网站的全部学习记录吗？')){localStorage.removeItem(STORAGE_KEY);localStorage.removeItem('math-contest-quiz-v1');location.reload();} });
+document.querySelector('#resetButton').addEventListener('click', () => { if(confirm('确定清除本网站的全部学习记录吗？')){localStorage.removeItem(STORAGE_KEY);localStorage.removeItem('math-contest-quiz-v1');localStorage.removeItem('math-contest-knowledge-v1');location.reload();} });
 
 function renderCoach(){
   if(!window.mathContestQuiz)return;

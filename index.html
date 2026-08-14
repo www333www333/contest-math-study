@@ -21,7 +21,7 @@
   <header class="topbar">
     <a class="brand" href="#top" aria-label="回到首页"><span class="brand-mark">∫</span><span>竞赛数学</span></a>
     <nav aria-label="主导航">
-      <a class="active" href="#overview">总览</a><a href="#coach">冲奖台</a><a href="#route">路线</a><a href="#practice">练习</a><a href="#drill">刷题</a><a href="#archive">真题库</a><a href="#notes">错题本</a>
+      <a class="active" href="#overview">总览</a><a href="#coach">冲奖台</a><a href="#route">路线</a><a href="#knowledge">知识图谱</a><a href="#practice">练习</a><a href="#drill">刷题</a><a href="#archive">真题库</a><a href="#notes">错题本</a>
     </nav>
     <button class="quiet-button" id="focusButton">专注模式</button>
   </header>
@@ -95,6 +95,24 @@
         <article class="route-card"><span class="week">第 6–8 周</span><h3>专题训练</h3><ul><li>不等式与证明</li><li>数列、组合与概率</li><li>综合题拆解</li></ul><button class="route-toggle" data-route="topics">标记完成</button></article>
         <article class="route-card"><span class="week">第 9–12 周</span><h3>真题冲刺</h3><ul><li>限时套卷</li><li>错题回炉</li><li>答题策略</li></ul><button class="route-toggle" data-route="sprint">标记完成</button></article>
       </div>
+    </section>
+
+    <section class="section knowledge-section" id="knowledge">
+      <div class="section-heading"><div><p class="eyebrow">KNOWLEDGE ATLAS</p><h2>历届知识图谱</h2></div><p class="section-note">按年份看考点，按结论建立可迁移的方法库。</p></div>
+      <div class="knowledge-summary">
+        <div><strong id="knowledgePointCount">19</strong><span>核心专题</span></div>
+        <div><strong id="knowledgeYearCount">17</strong><span>覆盖届次</span></div>
+        <div><strong id="knowledgeMastered">0 / 19</strong><span>已掌握结论</span></div>
+        <p>整理范围以网站现有的<strong>非数学类初赛</strong>资料为主；扫描版结合参考答案校对。点击专题可标记掌握并进入相关刷题。</p>
+      </div>
+      <div class="knowledge-frequency"><div><p class="coach-kicker">HIGH FREQUENCY</p><h3>跨年份高频考点</h3></div><div id="knowledgeFrequency"></div></div>
+      <div class="knowledge-toolbar">
+        <label>届次<select id="knowledgeYear"><option value="all">全部 17 届</option></select></label>
+        <label>模块<select id="knowledgeCategory"><option value="all">全部模块</option></select></label>
+        <label class="knowledge-search">⌕ <input id="knowledgeSearch" type="search" placeholder="搜索结论、推论或知识点" /></label>
+      </div>
+      <div class="knowledge-grid" id="knowledgeGrid"></div>
+      <p class="knowledge-empty" id="knowledgeEmpty" hidden>没有匹配的知识点，请更换筛选条件。</p>
     </section>
 
     <section class="section practice-section" id="practice">
@@ -180,8 +198,10 @@
   <footer><span>竞赛数学 · 为长线积累而设计</span><span>每一次演算，都在靠近答案。</span></footer>
   <script src="vendor/katex/katex.min.js"></script>
   <script src="vendor/katex/auto-render.min.js"></script>
+  <script src="knowledge-data.js"></script>
   <script src="quiz-data.js"></script>
   <script src="quiz.js"></script>
+  <script src="knowledge.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
